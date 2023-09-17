@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dompet/bloc/transaksi/transaksi_bloc.dart';
 import 'package:flutter_dompet/data/models/transaksi.dart';
-import 'package:flutter_dompet/pages/transaksi/transaksi_detail_page.dart';
 import 'package:flutter_dompet/utils/price_ext.dart';
 
 import '../../../utils/color_resources.dart';
@@ -18,12 +19,9 @@ class TransaksiItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return TransaksiDetailPage(
-            transaksi: transaksi,
-            title: 'Detail Transaksi ${transaksi.id}',
-          );
-        }));
+        context
+            .read<TransaksiBloc>()
+            .add(FetchShowTransaksiEvent(id: transaksi.id.toString()));
       },
       child: Row(
         children: [

@@ -21,8 +21,17 @@ class SignInWidget extends StatefulWidget {
 
 class SignInWidgetState extends State<SignInWidget> {
   TextEditingController? _emailController;
-  TextEditingController? _passwordController;
+  final FocusNode _emailNode = FocusNode();
   GlobalKey<FormState>? _formKeyLogin;
+  final FocusNode _passNode = FocusNode();
+  TextEditingController? _passwordController;
+
+  @override
+  void dispose() {
+    _emailController!.dispose();
+    _passwordController!.dispose();
+    super.dispose();
+  }
 
   @override
   void initState() {
@@ -33,16 +42,6 @@ class SignInWidgetState extends State<SignInWidget> {
     _emailController?.text = '@gmail.com';
     _passwordController?.text = '';
   }
-
-  @override
-  void dispose() {
-    _emailController!.dispose();
-    _passwordController!.dispose();
-    super.dispose();
-  }
-
-  final FocusNode _emailNode = FocusNode();
-  final FocusNode _passNode = FocusNode();
 
   void loginUser() async {
     if (_formKeyLogin!.currentState!.validate()) {
@@ -66,7 +65,7 @@ class SignInWidgetState extends State<SignInWidget> {
           email: email,
           password: password,
         );
-        context.read<LoginBloc>().add(LoginEvent.login(model));
+        context.read<LoginBloc>().add(FetchLoginEven(model: model));
       }
     }
   }
@@ -130,34 +129,29 @@ class SignInWidgetState extends State<SignInWidget> {
               margin: const EdgeInsets.only(
                   left: 20, right: 20, bottom: 20, top: 30),
               child: BlocConsumer<LoginBloc, LoginState>(
-                listener: (context, state) {
-                  state.maybeWhen(
-                    orElse: () {},
-                    loaded: (data) async {
-                      await AuthLocalDatasource().saveAuthData(data);
-                      Navigator.pushAndRemoveUntil(context,
-                          MaterialPageRoute(builder: (context) {
-                        return const DashboardPage();
-                      }), (route) => false);
-                    },
-                    error: (message) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(message),
-                        backgroundColor: Colors.red,
-                      ));
-                    },
-                  );
+                listener: (context, state) async {
+                  if (state.status == LoginStatus.error) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(state.error.message),
+                      backgroundColor: Colors.red,
+                    ));
+                  }
+                  if (state.status == LoginStatus.loaded) {
+                    await AuthLocalDatasource().saveAuthData(state.model);
+                    Navigator.pushAndRemoveUntil(context,
+                        MaterialPageRoute(builder: (context) {
+                      return const DashboardPage();
+                    }), (route) => false);
+                  }
                 },
                 builder: (context, state) {
-                  return state.maybeWhen(
-                    orElse: () {
-                      return CustomButton(
-                          onTap: loginUser, buttonText: 'Sign In');
-                    },
-                    loading: () => const Center(
+                  if (state.status == LoginStatus.loading) {
+                    return const Center(
                       child: CircularProgressIndicator(),
-                    ),
-                  );
+                    );
+                  }
+                  print('OK');
+                  return CustomButton(onTap: loginUser, buttonText: 'Sign In');
                 },
               ),
             ),

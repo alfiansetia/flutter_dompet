@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dompet/bloc/dompet/dompet_bloc.dart';
 import 'package:flutter_dompet/data/models/dompet.dart';
 
 import '../../utils/color_resources.dart';
@@ -25,58 +23,59 @@ class DompetDetailPage extends StatelessWidget {
           CustomScrollView(
             controller: _scrollController,
             slivers: [
-              BlocBuilder<DompetBloc, DompetState>(
-                builder: (context, state) {
-                  return state.maybeWhen(
-                    orElse: () {
-                      print('whem');
-                      return const SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        sliver: SliverToBoxAdapter(
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      );
-                    },
-                    loading: () {
-                      print('loadinmg');
-                      return const SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        sliver: SliverToBoxAdapter(
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      );
-                    },
-                    error: (message) {
-                      return SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        sliver: SliverToBoxAdapter(
-                          child: Center(
-                            child: Text(message),
-                          ),
-                        ),
-                      );
-                    },
-                    detailLoaded: (model) {
-                      return SliverToBoxAdapter(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("Name: ${model.name ?? ''}"),
-                            Text("Acc Name: ${model.accName ?? ''}"),
-                            Text("Acc No: ${model.accNumber ?? ''}"),
-                            Text("Type: ${model.type ?? ''}"),
-                            Text("Saldo: ${model.saldo ?? '0'}"),
-                          ],
-                        ),
-                      );
-                    },
-                  );
-                },
-              )
+              Text('data')
+              // BlocBuilder<DompetBloc, DompetState>(
+              //   builder: (context, state) {
+              //     return state.maybeWhen(
+              //       orElse: () {
+              //         print('whem');
+              //         return const SliverPadding(
+              //           padding: EdgeInsets.symmetric(horizontal: 16),
+              //           sliver: SliverToBoxAdapter(
+              //             child: Center(
+              //               child: CircularProgressIndicator(),
+              //             ),
+              //           ),
+              //         );
+              //       },
+              //       loading: () {
+              //         print('loadinmg');
+              //         return const SliverPadding(
+              //           padding: EdgeInsets.symmetric(horizontal: 16),
+              //           sliver: SliverToBoxAdapter(
+              //             child: Center(
+              //               child: CircularProgressIndicator(),
+              //             ),
+              //           ),
+              //         );
+              //       },
+              //       error: (message) {
+              //         return SliverPadding(
+              //           padding: const EdgeInsets.symmetric(horizontal: 16),
+              //           sliver: SliverToBoxAdapter(
+              //             child: Center(
+              //               child: Text(message),
+              //             ),
+              //           ),
+              //         );
+              //       },
+              //       detailLoaded: (model) {
+              //         return SliverToBoxAdapter(
+              //           child: Column(
+              //             crossAxisAlignment: CrossAxisAlignment.start,
+              //             children: [
+              //               Text("Name: ${model.name ?? ''}"),
+              //               Text("Acc Name: ${model.accName ?? ''}"),
+              //               Text("Acc No: ${model.accNumber ?? ''}"),
+              //               Text("Type: ${model.type ?? ''}"),
+              //               Text("Saldo: ${model.saldo ?? '0'}"),
+              //             ],
+              //           ),
+              //         );
+              //       },
+              //     );
+              //   },
+              // )
             ],
           ),
         ],

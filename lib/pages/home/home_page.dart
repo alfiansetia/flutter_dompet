@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dompet/bloc/dompet/dompet_bloc.dart';
-import 'package:flutter_dompet/pages/dompet/dompet_page.dart';
-import 'package:flutter_dompet/pages/home/widgets/dompet_item_widget.dart';
 
 import '../../utils/color_resources.dart';
 import '../../utils/custom_themes.dart';
@@ -20,9 +16,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final ScrollController _scrollController = ScrollController();
 
-  Future<void> _loadData(bool reload) async {
-    context.read<DompetBloc>().add(const DompetEvent.getAll(limit: 3));
-  }
+  // Future<void> _loadData(bool reload) async {
+  //   // context.read<DompetBloc>().add(const DompetEvent.getAll(limit: 3));
+  // }
 
   void passData(int index, String title) {
     index = index;
@@ -32,7 +28,7 @@ class _HomePageState extends State<HomePage> {
   bool singleVendor = false;
   @override
   void initState() {
-    context.read<DompetBloc>().add(const DompetEvent.getAll(limit: 3));
+    // context.read<DompetBloc>().add(const DompetEvent.getAll(limit: 3));
     super.initState();
   }
 
@@ -104,12 +100,12 @@ class _HomePageState extends State<HomePage> {
                         child: TitleRow(
                           title: 'Dompets',
                           onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const DompetListPage(),
-                              ),
-                            );
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => const DompetListPage(),
+                            //   ),
+                            // );
                           },
                         ),
                       ),
@@ -118,71 +114,71 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
               ),
-              BlocBuilder<DompetBloc, DompetState>(
-                builder: (context, state) {
-                  return state.maybeWhen(
-                    orElse: () {
-                      return const SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        sliver: SliverToBoxAdapter(
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      );
-                    },
-                    error: (message) {
-                      return SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        sliver: SliverToBoxAdapter(
-                          child: Center(
-                            child: Text(message),
-                          ),
-                        ),
-                      );
-                    },
-                    // refreshed: () {
-                    //   _loadData(true);
+              // BlocBuilder<DompetBloc, DompetState>(
+              //   builder: (context, state) {
+              //     return state.maybeWhen(
+              //       orElse: () {
+              //         return const SliverPadding(
+              //           padding: EdgeInsets.symmetric(horizontal: 16),
+              //           sliver: SliverToBoxAdapter(
+              //             child: Center(
+              //               child: CircularProgressIndicator(),
+              //             ),
+              //           ),
+              //         );
+              //       },
+              //       error: (message) {
+              //         return SliverPadding(
+              //           padding: const EdgeInsets.symmetric(horizontal: 16),
+              //           sliver: SliverToBoxAdapter(
+              //             child: Center(
+              //               child: Text(message),
+              //             ),
+              //           ),
+              //         );
+              //       },
+              //       // refreshed: () {
+              //       //   _loadData(true);
 
-                    //   return const SliverPadding(
-                    //     padding: EdgeInsets.symmetric(horizontal: 16),
-                    //     sliver: SliverToBoxAdapter(
-                    //       child: Center(
-                    //         child: CircularProgressIndicator(),
-                    //       ),
-                    //     ),
-                    //   );
-                    // },
-                    loaded: (model) {
-                      return SliverPadding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        sliver: SliverToBoxAdapter(
-                          child: SizedBox(
-                            height:
-                                100, // Sesuaikan tinggi card sesuai kebutuhan Anda
-                            child: ListView.builder(
-                              scrollDirection:
-                                  Axis.horizontal, // Atur scroll ke horizontal
-                              itemCount: model.data!.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return SizedBox(
-                                  width:
-                                      250, // Sesuaikan lebar card sesuai kebutuhan Anda
-                                  child: Card(
-                                    child: DompetItemWidget(
-                                      dompet: model.data![index],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
+              //       //   return const SliverPadding(
+              //       //     padding: EdgeInsets.symmetric(horizontal: 16),
+              //       //     sliver: SliverToBoxAdapter(
+              //       //       child: Center(
+              //       //         child: CircularProgressIndicator(),
+              //       //       ),
+              //       //     ),
+              //       //   );
+              //       // },
+              //       loaded: (model) {
+              //         return SliverPadding(
+              //           padding: const EdgeInsets.symmetric(horizontal: 16),
+              //           sliver: SliverToBoxAdapter(
+              //             child: SizedBox(
+              //               height:
+              //                   100, // Sesuaikan tinggi card sesuai kebutuhan Anda
+              //               child: ListView.builder(
+              //                 scrollDirection:
+              //                     Axis.horizontal, // Atur scroll ke horizontal
+              //                 itemCount: model.data!.length,
+              //                 itemBuilder: (BuildContext context, int index) {
+              //                   return SizedBox(
+              //                     width:
+              //                         250, // Sesuaikan lebar card sesuai kebutuhan Anda
+              //                     child: Card(
+              //                       child: DompetItemWidget(
+              //                         dompet: model.data![index],
+              //                       ),
+              //                     ),
+              //                   );
+              //                 },
+              //               ),
+              //             ),
+              //           ),
+              //         );
+              //       },
+              //     );
+              //   },
+              // ),
             ],
           ),
         ],

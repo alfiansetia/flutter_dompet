@@ -4,17 +4,6 @@ import 'package:flutter_dompet/data/models/dompet.dart';
 import 'package:flutter_dompet/data/models/user.dart';
 
 class Transaksi {
-  int? id;
-  String? date;
-  String? amount;
-  String? cost;
-  String? revenue;
-  String? status;
-  String? desc;
-  User? user;
-  Dompet? from;
-  Dompet? to;
-
   Transaksi({
     this.id,
     this.date,
@@ -30,8 +19,6 @@ class Transaksi {
 
   factory Transaksi.fromJson(String str) => Transaksi.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Transaksi.fromMap(Map<String, dynamic> json) => Transaksi(
         id: json["id"],
         date: json["date"],
@@ -43,6 +30,32 @@ class Transaksi {
         user: User.fromMap(json["user"]),
         from: Dompet.fromMap(json["from"]),
         to: Dompet.fromMap(json["to"]),
+      );
+
+  String? amount;
+  String? cost;
+  String? date;
+  String? desc;
+  Dompet? from;
+  int? id;
+  String? revenue;
+  String? status;
+  Dompet? to;
+  User? user;
+
+  String toJson() => json.encode(toMap());
+
+  factory Transaksi.initial() => Transaksi(
+        id: 1,
+        date: '',
+        amount: '',
+        cost: '',
+        desc: '',
+        revenue: '',
+        status: '',
+        from: Dompet.initial(),
+        to: Dompet.initial(),
+        user: User.initial(),
       );
 
   Map<String, dynamic> toMap() => {

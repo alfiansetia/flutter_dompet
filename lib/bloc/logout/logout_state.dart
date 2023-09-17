@@ -1,9 +1,36 @@
 part of 'logout_bloc.dart';
 
-@freezed
-class LogoutState with _$LogoutState {
-  const factory LogoutState.initial() = _Initial;
-  const factory LogoutState.loading() = _Loading;
-  const factory LogoutState.loaded(String message) = _Loaded;
-  const factory LogoutState.error(String message) = _Error;
+enum LogoutStatus { initial, loading, loaded, error }
+
+class LogoutState extends Equatable {
+  const LogoutState({
+    required this.status,
+    required this.error,
+  });
+
+  final LogoutStatus status;
+  final CustomError error;
+
+  factory LogoutState.initial() {
+    return LogoutState(
+      status: LogoutStatus.initial,
+      error: const CustomError(),
+    );
+  }
+
+  LogoutState copyWith({
+    LogoutStatus? status,
+    CustomError? error,
+  }) {
+    return LogoutState(
+      status: status ?? this.status,
+      error: error ?? this.error,
+    );
+  }
+
+  @override
+  List<Object> get props => [status, error];
+
+  @override
+  String toString() => 'LogoutState(status: $status, error: $error)';
 }

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dompet/bloc/transaksi/transaksi_bloc.dart';
 import 'package:flutter_dompet/data/models/transaksi.dart';
 
 import '../../utils/color_resources.dart';
@@ -12,6 +14,9 @@ class TransaksiDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // context
+    //     .read<TransaksiBloc>()
+    //     .add(FetchShowTransaksiEvent(id: transaksi.id.toString()));
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -26,16 +31,24 @@ class TransaksiDetailPage extends StatelessWidget {
             controller: _scrollController,
             slivers: [
               SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Date: ${transaksi.date ?? ''}"),
-                    Text("From: ${transaksi.from?.name ?? ''}"),
-                    Text("To: ${transaksi.to?.name ?? ''}"),
-                    Text("Amount: ${transaksi.amount ?? ''}"),
-                    Text("Cost: ${transaksi.cost ?? ''}"),
-                    Text("Status: ${transaksi.status ?? ''}"),
-                  ],
+                child: BlocBuilder<TransaksiBloc, TransaksiState>(
+                  builder: (context, state) {
+                    print(state.model.toString());
+                    if (state.status == TransaksiStatus.loading) {
+                      return CircularProgressIndicator();
+                    }
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text("Date: ${transaksi.date ?? ''}"),
+                        Text("From: ${transaksi.from?.name ?? ''}"),
+                        Text("To: ${transaksi.to?.name ?? ''}"),
+                        Text("Amount: ${transaksi.amount ?? ''}"),
+                        Text("Cost: ${transaksi.cost ?? ''}"),
+                        Text("Status: ${transaksi.status ?? ''}"),
+                      ],
+                    );
+                  },
                 ),
               ),
             ],
@@ -43,29 +56,5 @@ class TransaksiDetailPage extends StatelessWidget {
         ],
       )),
     );
-  }
-}
-
-class SliverDelegate extends SliverPersistentHeaderDelegate {
-  Widget child;
-  SliverDelegate({required this.child});
-
-  @override
-  Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return child;
-  }
-
-  @override
-  double get maxExtent => 70;
-
-  @override
-  double get minExtent => 70;
-
-  @override
-  bool shouldRebuild(SliverDelegate oldDelegate) {
-    return oldDelegate.maxExtent != 70 ||
-        oldDelegate.minExtent != 70 ||
-        child != oldDelegate.child;
   }
 }

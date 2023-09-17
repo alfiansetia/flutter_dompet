@@ -1,20 +1,27 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_dompet/data/datasources/auth_remote_datasource.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:flutter_dompet/data/models/custom_error.dart';
 
 part 'logout_event.dart';
 part 'logout_state.dart';
-part 'logout_bloc.freezed.dart';
 
 class LogoutBloc extends Bloc<LogoutEvent, LogoutState> {
-  LogoutBloc() : super(const _Initial()) {
-    on<_Logout>((event, emit) async {
-      emit(const _Loading());
-      final result = await AuthRemoteDatasource().logout();
-      result.fold(
-        (l) => emit(_Error(l)),
-        (r) => emit(_Loaded(r)),
-      );
-    });
+  LogoutBloc() : super(LogoutState.initial()) {
+    on<FetchLogoutEvent>(_logout);
+  }
+
+  Future<void> _logout(
+    FetchLogoutEvent event,
+    Emitter<LogoutState> emit,
+  ) async {
+    emit(state.copyWith(status: LogoutStatus.loading));
+
+    try {
+      await AuthRemoteDatasource().logout();
+      emit(state.copyWith(status: LogoutStatus.loaded));
+    } catch (e) {
+      emit(state.copyWith(status: LogoutStatus.error, error: e as CustomError));
+    }
   }
 }

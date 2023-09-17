@@ -1,22 +1,30 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter_dompet/data/datasources/auth_remote_datasource.dart';
 import 'package:flutter_dompet/data/models/auth_response_model.dart';
+import 'package:flutter_dompet/data/models/custom_error.dart';
 import 'package:flutter_dompet/data/models/requests/login_request_model.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'login_event.dart';
 part 'login_state.dart';
-part 'login_bloc.freezed.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
-  LoginBloc() : super(const _Initial()) {
-    on<_Login>((event, emit) async {
-      emit(const _Loading());
-      final result = await AuthRemoteDatasource().login(event.model);
-      result.fold(
-        (l) => emit(_Error(l)),
-        (r) => emit(_Loaded(r)),
-      );
-    });
+  LoginBloc() : super(LoginState.initial()) {
+    on<FetchLoginEven>(_login);
+  }
+
+  Future<void> _login(
+    FetchLoginEven event,
+    Emitter<LoginState> emit,
+  ) async {
+    emit(state.copyWith(status: LoginStatus.loading));
+
+    try {
+      final AuthResponseModel model =
+          await AuthRemoteDatasource().login(event.model);
+      emit(state.copyWith(status: LoginStatus.loaded, model: model));
+    } catch (e) {
+      emit(state.copyWith(status: LoginStatus.error, error: e as CustomError));
+    }
   }
 }

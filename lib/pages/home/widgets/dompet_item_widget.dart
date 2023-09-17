@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_dompet/bloc/dompet/dompet_bloc.dart';
 import 'package:flutter_dompet/data/models/dompet.dart';
 import 'package:flutter_dompet/pages/dompet/dompet_detail_page.dart';
 import 'package:flutter_dompet/utils/price_ext.dart';
@@ -30,8 +28,8 @@ class DompetItemWidget extends StatelessWidget {
             );
           }),
         );
-        BlocProvider.of<DompetBloc>(context)
-            .add(DompetEvent.getDetail(dompet.id!));
+        // BlocProvider.of<DompetBloc>(context)
+        //     .add(DompetEvent.getDetail(dompet.id!));
       },
       child: Container(
         // height: Dimensions.cardHeightnew,

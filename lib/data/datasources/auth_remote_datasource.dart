@@ -1,67 +1,56 @@
 import 'dart:convert';
 
-import 'package:dartz/dartz.dart';
 import 'package:flutter_dompet/common/global_variable.dart';
 import 'package:flutter_dompet/data/datasources/auth_local_datasoutce.dart';
 import 'package:flutter_dompet/data/models/auth_response_model.dart';
+import 'package:flutter_dompet/data/models/custom_error.dart';
 import 'package:flutter_dompet/data/models/requests/login_request_model.dart';
-import 'package:flutter_dompet/data/models/requests/register_request_model.dart';
+import 'package:flutter_dompet/data/service/http_error_handler.dart';
 import 'package:http/http.dart' as http;
 
 class AuthRemoteDatasource {
-  Future<Either<String, AuthResponseModel>> register(
-      RegisterRequestModel model) async {
-    final headers = {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    };
-    final response = await http.post(
-        Uri.parse('${GlobalVariables.baseUrl}/api/register'),
-        headers: headers,
-        body: model.toJson());
-
-    if (response.statusCode == 200) {
-      return Right(AuthResponseModel.fromJson(response.body));
-    } else {
-      return const Left('Server error');
-    }
-  }
-
-  Future<Either<String, AuthResponseModel>> login(
-      LoginRequestModel model) async {
+  Future<AuthResponseModel> login(LoginRequestModel model) async {
     final headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
     };
-    final response = await http.post(
-        Uri.parse('${GlobalVariables.baseUrl}/api/login'),
-        headers: headers,
-        body: model.toJson());
-
-    if (response.statusCode == 200) {
-      return Right(AuthResponseModel.fromJson(response.body));
-    } else {
-      final obj = jsonDecode(response.body);
-      return Left(obj['message']);
+    try {
+      final response = await http.post(
+          Uri.parse('${GlobalVariables.baseUrl}/api/login'),
+          headers: headers,
+          body: model.toJson());
+      if (response.statusCode != 200) {
+        throw httpErrorHandler(response);
+      }
+      final responseBody = json.decode(response.body);
+      if (responseBody.isEmpty) {
+        throw CustomError(message: "cannot Login");
+      }
+      final data = AuthResponseModel.fromMap(responseBody);
+      return data;
+    } catch (e) {
+      rethrow;
     }
   }
 
-  Future<Either<String, String>> logout() async {
+  Future<void> logout() async {
     final token = await AuthLocalDatasource().getToken();
     final headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
-    final response = await http.post(
-      Uri.parse('${GlobalVariables.baseUrl}/api/logout'),
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      return const Right('logout success');
-    } else {
-      return const Left('Server error');
+    try {
+      final response = await http.post(
+        Uri.parse('${GlobalVariables.baseUrl}/api/logout'),
+        headers: headers,
+      );
+      final responseBody = json.decode(response.body);
+      if (responseBody.isEmpty) {
+        throw CustomError(message: "Cannot Logout");
+      }
+    } catch (e) {
+      rethrow;
     }
   }
 }

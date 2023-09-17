@@ -1,12 +1,18 @@
 import 'dart:convert';
 
-class LoginRequestModel {
-  final String email;
-  final String password;
+import 'package:equatable/equatable.dart';
+
+class LoginRequestModel extends Equatable {
   LoginRequestModel({
     required this.email,
     required this.password,
   });
+
+  final String email;
+  final String password;
+
+  @override
+  List<Object> get props => [email, password];
 
   Map<String, dynamic> toMap() {
     return {
@@ -22,8 +28,26 @@ class LoginRequestModel {
     );
   }
 
+  factory LoginRequestModel.initial() => LoginRequestModel(
+        email: '',
+        password: '',
+      );
+
   String toJson() => json.encode(toMap());
 
   factory LoginRequestModel.fromJson(String source) =>
       LoginRequestModel.fromMap(json.decode(source));
+
+  @override
+  String toString() => 'LoginRequestModel(email: $email, password: $password)';
+
+  LoginRequestModel copyWith({
+    String? email,
+    String? password,
+  }) {
+    return LoginRequestModel(
+      email: email ?? this.email,
+      password: password ?? this.password,
+    );
+  }
 }

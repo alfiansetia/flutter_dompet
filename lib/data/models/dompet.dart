@@ -1,13 +1,6 @@
 import 'dart:convert';
 
 class Dompet {
-  int? id;
-  String? name;
-  String? type;
-  String? accName;
-  String? accNumber;
-  String? saldo;
-
   Dompet({
     this.id,
     this.name,
@@ -19,8 +12,6 @@ class Dompet {
 
   factory Dompet.fromJson(String str) => Dompet.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory Dompet.fromMap(Map<String, dynamic> json) => Dompet(
         id: json["id"],
         name: json["name"],
@@ -29,6 +20,24 @@ class Dompet {
         accNumber: json["acc_number"],
         saldo: json["saldo"],
       );
+
+  factory Dompet.initial() => Dompet(
+        id: 1,
+        name: '',
+        saldo: '',
+        type: '',
+        accName: '',
+        accNumber: '',
+      );
+
+  String? accName;
+  String? accNumber;
+  int? id;
+  String? name;
+  String? saldo;
+  String? type;
+
+  String toJson() => json.encode(toMap());
 
   Map<String, dynamic> toMap() => {
         "id": id,
