@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dompet/bloc/dompet/dompet_bloc.dart';
+import 'package:flutter_dompet/pages/home/widgets/dompet_item_widget.dart';
 import 'package:flutter_dompet/utils/color_resources.dart';
 
 class DompetListPage extends StatefulWidget {
@@ -9,11 +12,13 @@ class DompetListPage extends StatefulWidget {
 }
 
 class _DompetListPageState extends State<DompetListPage> {
-  final ScrollController _scrollController = ScrollController();
+  Future<void> _refreshData() async {
+    context.read<DompetBloc>().add(const FetchAllDompetEvent());
+  }
 
   @override
   void initState() {
-    // context.read<DompetBloc>().add(const DompetEvent.getAll(limit: 3));
+    _refreshData();
     super.initState();
   }
 
@@ -24,70 +29,51 @@ class _DompetListPageState extends State<DompetListPage> {
         title: const Text('Dompet'),
       ),
       backgroundColor: ColorResources.getHomeBg(context),
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-          child: Stack(
-        children: [
-          CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              // BlocBuilder<DompetBloc, DompetState>(
-              //   builder: (context, state) {
-              //     return state.maybeWhen(
-              //       orElse: () {
-              //         return const SliverPadding(
-              //           padding: EdgeInsets.symmetric(horizontal: 16),
-              //           sliver: SliverToBoxAdapter(
-              //             child: Center(
-              //               child: CircularProgressIndicator(),
-              //             ),
-              //           ),
-              //         );
-              //       },
-              //       error: (message) {
-              //         return SliverPadding(
-              //           padding: const EdgeInsets.symmetric(horizontal: 16),
-              //           sliver: SliverToBoxAdapter(
-              //             child: Center(
-              //               child: Text(message),
-              //             ),
-              //           ),
-              //         );
-              //       },
-              //       loading: () {
-              //         return const SliverPadding(
-              //           padding: EdgeInsets.symmetric(horizontal: 16),
-              //           sliver: SliverToBoxAdapter(
-              //             child: Center(
-              //               child: CircularProgressIndicator(),
-              //             ),
-              //           ),
-              //         );
-              //       },
-              //       loaded: (model) {
-              //         return SliverPadding(
-              //           padding: const EdgeInsets.symmetric(horizontal: 16),
-              //           sliver: SliverList(
-              //             delegate: SliverChildBuilderDelegate(
-              //               (BuildContext context, int index) {
-              //                 return Card(
-              //                   child: DompetItemWidget(
-              //                     dompet: model.data![index],
-              //                   ),
-              //                 );
-              //               },
-              //               childCount: model.data!.length,
-              //             ),
-              //           ),
-              //         );
-              //       },
-              //     );
-              //   },
-              // ),
-            ],
+      // resizeToAvoidBottomInset: false,
+      body: RefreshIndicator(
+        child: SafeArea(
+          child: BlocBuilder<DompetBloc, DompetState>(
+            builder: (context, state) {
+              if (state.status == DompetStatus.error) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(state.error.message),
+                      ElevatedButton(
+                        onPressed: _refreshData,
+                        child: Text('Refresh'),
+                      ),
+                    ],
+                  ),
+                );
+              } else if (state.status == DompetStatus.loaded) {
+                return ListView.builder(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  itemCount: state.model.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return Card(
+                      child: DompetItemWidget(
+                        dompet: state.model[index],
+                      ),
+                    );
+                  },
+                );
+              } else {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
           ),
-        ],
-      )),
+        ),
+        onRefresh: () => _refreshData(),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: Icon(Icons.add),
+      ),
     );
   }
 }

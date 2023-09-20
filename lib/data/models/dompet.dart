@@ -24,7 +24,7 @@ class Dompet {
   factory Dompet.initial() => Dompet(
         id: 1,
         name: '',
-        saldo: '',
+        saldo: 0,
         type: '',
         accName: '',
         accNumber: '',
@@ -34,7 +34,7 @@ class Dompet {
   String? accNumber;
   int? id;
   String? name;
-  String? saldo;
+  int? saldo;
   String? type;
 
   String toJson() => json.encode(toMap());

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dompet/bloc/dompet/dompet_bloc.dart';
 import 'package:flutter_dompet/data/models/dompet.dart';
 import 'package:flutter_dompet/pages/dompet/dompet_detail_page.dart';
 import 'package:flutter_dompet/utils/price_ext.dart';
@@ -18,24 +20,38 @@ class DompetItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return DompetDetailPage(
-            dompet: dompet,
-            title: 'Detail dompet ${dompet.id}',
-          );
-        }));
+        Navigator.of(context).push(
+          MaterialPageRoute<DompetDetailPage>(
+            builder: (context) {
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) => DompetBloc(),
+                  ),
+                ],
+                child: DompetDetailPage(
+                  id: dompet.id!,
+                  title: 'Detail Dompet ${dompet.accName}',
+                ),
+              );
+            },
+          ),
+        );
       },
       child: Row(
         children: [
           Container(
             width: 60,
             height: 60,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
+              // color: dompet.status == 'success' ? Colors.green : Colors.red,
               shape: BoxShape.circle,
-              // image: DecorationImage(
-              //   image: Text(data)
-              //   fit: BoxFit.cover,
-              // ),
+              image: DecorationImage(
+                image: NetworkImage(
+                  'https://picsum.photos/200${dompet.id}',
+                ),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           const SizedBox(width: Dimensions.paddingSizeSmall),
@@ -54,7 +70,7 @@ class DompetItemWidget extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  dompet.accName ?? '-',
+                  dompet.accName ?? '',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: titilliumRegular.copyWith(
@@ -68,7 +84,7 @@ class DompetItemWidget extends StatelessWidget {
           const SizedBox(width: Dimensions.paddingSizeSmall),
           // Tanggal
           Text(
-            (dompet.saldo ?? '0').formatPrice(),
+            '${(dompet.saldo ?? '0')}'.formatPrice(),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: titilliumRegular.copyWith(

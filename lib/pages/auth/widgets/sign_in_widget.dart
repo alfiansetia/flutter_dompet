@@ -39,8 +39,8 @@ class SignInWidgetState extends State<SignInWidget> {
     _formKeyLogin = GlobalKey<FormState>();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
-    _emailController?.text = '@gmail.com';
-    _passwordController?.text = '';
+    _emailController?.text = 'admin@gmail.com';
+    _passwordController?.text = 'admin12345';
   }
 
   void loginUser() async {
@@ -140,7 +140,7 @@ class SignInWidgetState extends State<SignInWidget> {
                     await AuthLocalDatasource().saveAuthData(state.model);
                     Navigator.pushAndRemoveUntil(context,
                         MaterialPageRoute(builder: (context) {
-                      return const DashboardPage();
+                      return DashboardPage();
                     }), (route) => false);
                   }
                 },

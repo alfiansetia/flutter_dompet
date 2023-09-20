@@ -1,12 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_dompet/data/datasources/auth_remote_datasource.dart';
 import 'package:flutter_dompet/data/models/custom_error.dart';
+import 'package:flutter_dompet/data/repository/auth_repository.dart';
 
 part 'logout_event.dart';
 part 'logout_state.dart';
 
 class LogoutBloc extends Bloc<LogoutEvent, LogoutState> {
+  final authrepo = AuthRepository();
   LogoutBloc() : super(LogoutState.initial()) {
     on<FetchLogoutEvent>(_logout);
   }
@@ -18,10 +19,14 @@ class LogoutBloc extends Bloc<LogoutEvent, LogoutState> {
     emit(state.copyWith(status: LogoutStatus.loading));
 
     try {
-      await AuthRemoteDatasource().logout();
+      await authrepo.logout();
       emit(state.copyWith(status: LogoutStatus.loaded));
+    } on CustomError catch (e) {
+      emit(state.copyWith(status: LogoutStatus.error, error: e));
     } catch (e) {
-      emit(state.copyWith(status: LogoutStatus.error, error: e as CustomError));
+      emit(state.copyWith(
+          status: LogoutStatus.error,
+          error: CustomError(message: e.toString())));
     }
   }
 }

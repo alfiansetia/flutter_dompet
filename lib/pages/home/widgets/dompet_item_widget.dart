@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dompet/bloc/dompet/dompet_bloc.dart';
 import 'package:flutter_dompet/data/models/dompet.dart';
 import 'package:flutter_dompet/pages/dompet/dompet_detail_page.dart';
 import 'package:flutter_dompet/utils/price_ext.dart';
@@ -19,17 +21,23 @@ class DompetItemWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) {
-            return DompetDetailPage(
-              dompet: dompet,
-              title: 'Detail Dompet ${dompet.id}',
-            );
-          }),
+        Navigator.of(context).push(
+          MaterialPageRoute<DompetDetailPage>(
+            builder: (context) {
+              return MultiBlocProvider(
+                providers: [
+                  BlocProvider(
+                    create: (context) => DompetBloc(),
+                  ),
+                ],
+                child: DompetDetailPage(
+                  id: dompet.id!,
+                  title: 'Detail Dompet ${dompet.accName}',
+                ),
+              );
+            },
+          ),
         );
-        // BlocProvider.of<DompetBloc>(context)
-        //     .add(DompetEvent.getDetail(dompet.id!));
       },
       child: Container(
         // height: Dimensions.cardHeightnew,

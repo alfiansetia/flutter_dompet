@@ -1,87 +1,66 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dompet/data/datasources/auth_local_datasoutce.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dompet/bloc/navigation/navigation_bloc.dart';
 import 'package:flutter_dompet/pages/akun/akun_page.dart';
 import 'package:flutter_dompet/pages/dompet/dompet_page.dart';
 import 'package:flutter_dompet/pages/home/home_page.dart';
 import 'package:flutter_dompet/pages/transaksi/transaksi_page.dart';
-
-import '../../utils/images.dart';
+import 'package:flutter_dompet/utils/images.dart';
 
 class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+  const DashboardPage({Key? key}) : super(key: key);
 
   @override
-  State<DashboardPage> createState() => _HomePageState();
+  _DashboardPageState createState() => _DashboardPageState();
 }
 
-class _HomePageState extends State<DashboardPage> {
+class _DashboardPageState extends State<DashboardPage> {
   final PageController _pageController = PageController();
-  int _pageIndex = 0;
-  late List<Widget> _screens;
-  final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey();
-
-  bool singleVendor = false;
-
-  String token = '';
-
-  @override
-  void initState() {
-    super.initState();
-
-    AuthLocalDatasource().getToken().then((value) {
-      setState(() {
-        token = value;
-      });
-    });
-
-    _screens = [
-      const HomePage(),
-      TransaksiPage(),
-      const DompetListPage(),
-      // Center(child: Text('data')
-      const AkunPage(),
-    ];
-  }
+  List<Widget> _screens = [
+    HomePage(),
+    TransaksiPage(),
+    const DompetListPage(),
+    const AkunPage(),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: Text(token)),
-      key: _scaffoldKey,
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Theme.of(context).primaryColor,
-        unselectedItemColor: Theme.of(context).textTheme.bodyLarge!.color,
-        showUnselectedLabels: true,
-        currentIndex: _pageIndex,
-        type: BottomNavigationBarType.fixed,
-        items: _getBottomWidget(singleVendor),
-        onTap: (int index) {
-          _setPage(index);
+      bottomNavigationBar: BlocBuilder<NavigationBloc, NavigationState>(
+        builder: (context, index) {
+          return BottomNavigationBar(
+            selectedItemColor: Theme.of(context).primaryColor,
+            unselectedItemColor: Theme.of(context).textTheme.bodyLarge!.color,
+            showUnselectedLabels: true,
+            currentIndex: context.read<NavigationBloc>().state.index,
+            type: BottomNavigationBarType.fixed,
+            items: _getBottomWidget(false),
+            onTap: (int index) {
+              context
+                  .read<NavigationBloc>()
+                  .add(NavigationSetEvent(index: index));
+            },
+          );
         },
       ),
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: _screens.length,
-        physics: const NeverScrollableScrollPhysics(),
-        itemBuilder: (context, index) {
-          return _screens[index];
+      body: BlocBuilder<NavigationBloc, NavigationState>(
+        builder: (context, state) {
+          return PageView.builder(
+            controller: _pageController,
+            physics: NeverScrollableScrollPhysics(),
+            itemBuilder: (context, index) =>
+                _screens[context.read<NavigationBloc>().state.index],
+          );
         },
       ),
     );
-  }
-
-  void _setPage(int pageIndex) {
-    setState(() {
-      _pageController.jumpToPage(pageIndex);
-      _pageIndex = pageIndex;
-    });
   }
 
   BottomNavigationBarItem _barItem(String icon, String? label, int index) {
     return BottomNavigationBarItem(
       icon: Image.asset(
         icon,
-        color: index == _pageIndex
+        color: index == context.read<NavigationBloc>().state.index
             ? Theme.of(context).primaryColor
             : Theme.of(context).textTheme.bodyLarge!.color!.withOpacity(0.5),
         height: 25,

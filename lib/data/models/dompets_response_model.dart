@@ -5,10 +5,6 @@ import 'package:flutter_dompet/data/models/links.dart';
 import 'package:flutter_dompet/data/models/meta.dart';
 
 class DompetsResponseModel {
-  List<Dompet>? data;
-  Links? links;
-  Meta? meta;
-
   DompetsResponseModel({
     this.data,
     this.links,
@@ -18,8 +14,6 @@ class DompetsResponseModel {
   factory DompetsResponseModel.fromJson(String str) =>
       DompetsResponseModel.fromMap(json.decode(str));
 
-  String toJson() => json.encode(toMap());
-
   factory DompetsResponseModel.fromMap(Map<String, dynamic> json) =>
       DompetsResponseModel(
         data: json["data"] == null
@@ -28,6 +22,12 @@ class DompetsResponseModel {
         links: json["links"] == null ? null : Links.fromMap(json["links"]),
         meta: json["meta"] == null ? null : Meta.fromMap(json["meta"]),
       );
+
+  List<Dompet>? data;
+  Links? links;
+  Meta? meta;
+
+  String toJson() => json.encode(toMap());
 
   Map<String, dynamic> toMap() => {
         "data":

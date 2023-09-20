@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-import 'package:flutter_dompet/data/models/custom_error.dart';
 import 'package:http/http.dart' as http;
 
-CustomError httpErrorHandler(http.Response response) {
+String httpErrorHandler(http.Response response) {
   String message = '';
   final statusCode = response.statusCode;
   final reasonPhrase = response.reasonPhrase;
@@ -15,5 +14,5 @@ CustomError httpErrorHandler(http.Response response) {
   } else {
     message = reasonPhrase ?? 'Error';
   }
-  return CustomError(message: message);
+  return message;
 }

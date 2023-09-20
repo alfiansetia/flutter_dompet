@@ -32,31 +32,31 @@ class Transaksi {
         to: Dompet.fromMap(json["to"]),
       );
 
-  String? amount;
-  String? cost;
-  String? date;
-  String? desc;
-  Dompet? from;
-  int? id;
-  String? revenue;
-  String? status;
-  Dompet? to;
-  User? user;
-
-  String toJson() => json.encode(toMap());
-
   factory Transaksi.initial() => Transaksi(
         id: 1,
         date: '',
-        amount: '',
-        cost: '',
+        amount: 0,
+        cost: 0,
         desc: '',
-        revenue: '',
+        revenue: 0,
         status: '',
         from: Dompet.initial(),
         to: Dompet.initial(),
         user: User.initial(),
       );
+
+  int? amount;
+  int? cost;
+  String? date;
+  String? desc;
+  Dompet? from;
+  int? id;
+  int? revenue;
+  String? status;
+  Dompet? to;
+  User? user;
+
+  String toJson() => json.encode(toMap());
 
   Map<String, dynamic> toMap() => {
         "id": id,

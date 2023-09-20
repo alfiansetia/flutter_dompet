@@ -8,19 +8,9 @@ abstract class TransaksiEvent extends Equatable {
 }
 
 class FetchAllTransaksiEvent extends TransaksiEvent {
-  const FetchAllTransaksiEvent();
+  const FetchAllTransaksiEvent({required this.page});
+  final int page;
 
   @override
-  List<Object> get props => [];
-}
-
-class FetchShowTransaksiEvent extends TransaksiEvent {
-  final String id;
-
-  FetchShowTransaksiEvent({
-    required this.id,
-  });
-
-  @override
-  List<Object> get props => [id];
+  List<Object> get props => [page];
 }

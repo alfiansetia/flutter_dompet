@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dompet/data/models/dompet.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dompet/bloc/dompet_form/dompet_form_bloc.dart';
 
 import '../../utils/color_resources.dart';
 
 class DompetDetailPage extends StatelessWidget {
-  final _scrollController = ScrollController();
   final String title;
-  final Dompet dompet;
-  DompetDetailPage({super.key, required this.dompet, required this.title});
+  final int id;
+  DompetDetailPage({super.key, required this.id, required this.title});
 
   @override
   Widget build(BuildContext context) {
+    context.read<DompetFormBloc>().add(DetailDompetFormEvent(id: id));
+
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
@@ -18,68 +20,48 @@ class DompetDetailPage extends StatelessWidget {
       backgroundColor: ColorResources.getHomeBg(context),
       resizeToAvoidBottomInset: false,
       body: SafeArea(
-          child: Stack(
-        children: [
-          CustomScrollView(
-            controller: _scrollController,
-            slivers: [
-              Text('data')
-              // BlocBuilder<DompetBloc, DompetState>(
-              //   builder: (context, state) {
-              //     return state.maybeWhen(
-              //       orElse: () {
-              //         print('whem');
-              //         return const SliverPadding(
-              //           padding: EdgeInsets.symmetric(horizontal: 16),
-              //           sliver: SliverToBoxAdapter(
-              //             child: Center(
-              //               child: CircularProgressIndicator(),
-              //             ),
-              //           ),
-              //         );
-              //       },
-              //       loading: () {
-              //         print('loadinmg');
-              //         return const SliverPadding(
-              //           padding: EdgeInsets.symmetric(horizontal: 16),
-              //           sliver: SliverToBoxAdapter(
-              //             child: Center(
-              //               child: CircularProgressIndicator(),
-              //             ),
-              //           ),
-              //         );
-              //       },
-              //       error: (message) {
-              //         return SliverPadding(
-              //           padding: const EdgeInsets.symmetric(horizontal: 16),
-              //           sliver: SliverToBoxAdapter(
-              //             child: Center(
-              //               child: Text(message),
-              //             ),
-              //           ),
-              //         );
-              //       },
-              //       detailLoaded: (model) {
-              //         return SliverToBoxAdapter(
-              //           child: Column(
-              //             crossAxisAlignment: CrossAxisAlignment.start,
-              //             children: [
-              //               Text("Name: ${model.name ?? ''}"),
-              //               Text("Acc Name: ${model.accName ?? ''}"),
-              //               Text("Acc No: ${model.accNumber ?? ''}"),
-              //               Text("Type: ${model.type ?? ''}"),
-              //               Text("Saldo: ${model.saldo ?? '0'}"),
-              //             ],
-              //           ),
-              //         );
-              //       },
-              //     );
-              //   },
-              // )
-            ],
-          ),
-        ],
-      )),
+        child: BlocBuilder<DompetFormBloc, DompetFormState>(
+          builder: (context, state) {
+            if (state.status == DompetFormStatus.loaded) {
+              return Center(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Name: ${state.model.name ?? ''}"),
+                    Text("Acc Name: ${state.model.accName ?? ''}"),
+                    Text("Acc No: ${state.model.accNumber ?? ''}"),
+                    Text("Type: ${state.model.type ?? ''}"),
+                    Text("Saldo: ${state.model.saldo ?? '0'}"),
+                  ],
+                ),
+              );
+            } else if (state.status == DompetFormStatus.error) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(state.error.message),
+                    ElevatedButton(
+                      onPressed: () async {
+                        context
+                            .read<DompetFormBloc>()
+                            .add(DetailDompetFormEvent(id: id));
+                      },
+                      child: Text('Refresh'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        ),
+      ),
     );
   }
 }

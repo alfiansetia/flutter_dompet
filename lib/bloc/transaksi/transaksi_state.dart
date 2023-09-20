@@ -4,7 +4,6 @@ enum TransaksiStatus {
   initial,
   loading,
   loaded,
-  detailLoaded,
   error,
 }
 
@@ -13,39 +12,45 @@ class TransaksiState extends Equatable {
     required this.error,
     required this.model,
     required this.status,
-    required this.detail,
+    required this.hasMax,
+    required this.page,
   });
 
   factory TransaksiState.initial() => TransaksiState(
-      error: CustomError(message: ''),
-      model: TransaksisResponseModel(),
-      status: TransaksiStatus.initial,
-      detail: Transaksi.initial());
+        error: CustomError(),
+        model: [],
+        status: TransaksiStatus.initial,
+        hasMax: true,
+        page: 1,
+      );
 
-  final Transaksi detail;
   final CustomError error;
-  final TransaksisResponseModel model;
+  final List<Transaksi> model;
   final TransaksiStatus status;
+  final bool hasMax;
+  final int page;
 
   @override
-  List<Object> get props => [error, model, status, detail];
+  List<Object> get props => [error, model, status, hasMax, page];
 
   @override
   String toString() {
-    return 'TransaksiState(error: $error, model: $model, status: $status, detail: $detail)';
+    return 'TransaksiState(error: $error, model: $model, status: $status, hasMax: $hasMax, page: $page)';
   }
 
   TransaksiState copyWith({
     CustomError? error,
-    TransaksisResponseModel? model,
+    List<Transaksi>? model,
     TransaksiStatus? status,
-    Transaksi? detail,
+    bool? hasMax,
+    int? page,
   }) {
     return TransaksiState(
       error: error ?? this.error,
       model: model ?? this.model,
       status: status ?? this.status,
-      detail: detail ?? this.detail,
+      hasMax: hasMax ?? this.hasMax,
+      page: page ?? this.page,
     );
   }
 }

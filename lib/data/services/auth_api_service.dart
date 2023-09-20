@@ -1,14 +1,13 @@
 import 'dart:convert';
 
 import 'package:flutter_dompet/common/global_variable.dart';
-import 'package:flutter_dompet/data/datasources/auth_local_datasoutce.dart';
 import 'package:flutter_dompet/data/models/auth_response_model.dart';
-import 'package:flutter_dompet/data/models/custom_error.dart';
 import 'package:flutter_dompet/data/models/requests/login_request_model.dart';
-import 'package:flutter_dompet/data/service/http_error_handler.dart';
+import 'package:flutter_dompet/data/services/http_error_handler.dart';
+import 'package:flutter_dompet/exceptions/auth_exception.dart';
 import 'package:http/http.dart' as http;
 
-class AuthRemoteDatasource {
+class AuthApiService {
   Future<AuthResponseModel> login(LoginRequestModel model) async {
     final headers = {
       'Accept': 'application/json',
@@ -24,17 +23,15 @@ class AuthRemoteDatasource {
       }
       final responseBody = json.decode(response.body);
       if (responseBody.isEmpty) {
-        throw CustomError(message: "cannot Login");
+        throw AuthException("cannot Login");
       }
-      final data = AuthResponseModel.fromMap(responseBody);
-      return data;
+      return AuthResponseModel.fromMap(responseBody);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> logout() async {
-    final token = await AuthLocalDatasource().getToken();
+  Future<bool> logout({required String token}) async {
     final headers = {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -47,8 +44,9 @@ class AuthRemoteDatasource {
       );
       final responseBody = json.decode(response.body);
       if (responseBody.isEmpty) {
-        throw CustomError(message: "Cannot Logout");
+        throw AuthException("Cannot Logout");
       }
+      return true;
     } catch (e) {
       rethrow;
     }
