@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dompet/bloc/dompet/dompet_bloc.dart';
 import 'package:flutter_dompet/bloc/navigation/navigation_bloc.dart';
+import 'package:flutter_dompet/pages/home/widgets/banner_widget.dart';
 import 'package:flutter_dompet/pages/home/widgets/dompet_item_widget.dart';
 
 import '../../utils/color_resources.dart';
@@ -114,6 +115,7 @@ class _HomePageState extends State<HomePage> {
                     }
                   },
                 ),
+                BannerWidget(),
               ],
             ),
           ),
