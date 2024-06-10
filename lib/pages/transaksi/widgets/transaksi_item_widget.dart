@@ -40,35 +40,27 @@ class TransaksiItemWidget extends StatelessWidget {
       },
       child: Row(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              color: transaksi.status == 'success' ? Colors.green : Colors.red,
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: NetworkImage(
-                  transaksi.user?.avatar ?? '',
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          const SizedBox(width: Dimensions.paddingSizeSmall),
+          // Container(
+          //   width: 60,
+          //   height: 60,
+          //   decoration: BoxDecoration(
+          //     color: transaksi.status == 'success' ? Colors.green : Colors.red,
+          //     shape: BoxShape.circle,
+          //     image: DecorationImage(
+          //       image: NetworkImage(
+          //         transaksi.user?.avatar ?? '',
+          //       ),
+          //       fit: BoxFit.cover,
+          //     ),
+          //   ),
+          // ),
+          const SizedBox(width: Dimensions.paddingSizeExtraLarge),
           // Informasi Transaksi
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  transaksi.date ?? '-',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: titilliumRegular.copyWith(
-                    fontSize: Dimensions.fontSizeSmall,
-                    color: ColorResources.getTextTitle(context),
-                  ),
-                ),
+                SizedBox(height: 10),
                 Text(
                   '${transaksi.from?.name ?? '-'} TO ${transaksi.to?.name ?? '-'}',
                   maxLines: 1,
@@ -78,11 +70,20 @@ class TransaksiItemWidget extends StatelessWidget {
                     color: ColorResources.getTextTitle(context),
                   ),
                 ),
-                Text(transaksi.id.toString()),
+                Text(
+                  transaksi.date ?? '-',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: titilliumRegular.copyWith(
+                    fontSize: Dimensions.fontSizeSmall,
+                    color: ColorResources.getTextTitle(context),
+                  ),
+                ),
+                Text(transaksi.number.toString()),
               ],
             ),
           ),
-          const SizedBox(width: Dimensions.paddingSizeSmall),
+          const SizedBox(width: Dimensions.paddingSizeExtraLarge),
           // Tanggal
           Text(
             '${(transaksi.amount ?? '-')}'.formatPrice(),

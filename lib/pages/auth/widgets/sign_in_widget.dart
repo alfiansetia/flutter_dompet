@@ -39,8 +39,8 @@ class SignInWidgetState extends State<SignInWidget> {
     _formKeyLogin = GlobalKey<FormState>();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
-    _emailController?.text = 'admin@gmail.com';
-    _passwordController?.text = 'admin12345';
+    _emailController?.text = 'alfian.setia100@gmail.com';
+    _passwordController?.text = 'Ngetrep45';
   }
 
   void loginUser() async {
@@ -145,12 +145,12 @@ class SignInWidgetState extends State<SignInWidget> {
                   }
                 },
                 builder: (context, state) {
+                  print(state);
                   if (state.status == LoginStatus.loading) {
                     return const Center(
                       child: CircularProgressIndicator(),
                     );
                   }
-                  print('OK');
                   return CustomButton(onTap: loginUser, buttonText: 'Sign In');
                 },
               ),
