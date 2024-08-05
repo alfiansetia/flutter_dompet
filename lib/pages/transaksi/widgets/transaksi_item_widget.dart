@@ -31,7 +31,7 @@ class TransaksiItemWidget extends StatelessWidget {
                 ],
                 child: TransaksiDetailPage(
                   id: transaksi.id!,
-                  title: 'Detail Transaksi ${transaksi.id}',
+                  title: '${transaksi.number}',
                 ),
               );
             },
@@ -60,13 +60,13 @@ class TransaksiItemWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 10),
+                SizedBox(height: 16),
                 Text(
-                  '${transaksi.from?.name ?? '-'} TO ${transaksi.to?.name ?? '-'}',
+                  '${transaksi.from?.name ?? '-'} TO ${transaksi.to?.name ?? '-'} ${transaksi.number}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: titilliumRegular.copyWith(
-                    fontSize: Dimensions.fontSizeSmall,
+                    fontSize: Dimensions.fontSizeLarge,
                     color: ColorResources.getTextTitle(context),
                   ),
                 ),
@@ -79,7 +79,8 @@ class TransaksiItemWidget extends StatelessWidget {
                     color: ColorResources.getTextTitle(context),
                   ),
                 ),
-                Text(transaksi.number.toString()),
+                Text(transaksi.desc ?? ''),
+                SizedBox(height: 16),
               ],
             ),
           ),
@@ -94,6 +95,9 @@ class TransaksiItemWidget extends StatelessWidget {
               color: ColorResources.getTextTitle(context),
             ),
           ),
+          const SizedBox(
+            width: 16,
+          )
         ],
       ),
     );

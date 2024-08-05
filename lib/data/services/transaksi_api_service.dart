@@ -24,7 +24,8 @@ class TransaksiApiService {
 
     try {
       final response = await http.get(
-        Uri.parse('${GlobalVariables.baseUrl}/api/transaksis?limit=20&$query'),
+        Uri.parse(
+            '${GlobalVariables.baseUrl}/api/transaksi-paginate?limit=20&$query&order_id_desc=true'),
         headers: headers,
       );
       if (response.statusCode != 200) {

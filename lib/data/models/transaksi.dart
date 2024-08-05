@@ -16,6 +16,7 @@ class Transaksi {
     this.from,
     this.to,
     this.number,
+    this.image,
   });
 
   factory Transaksi.fromJson(String str) => Transaksi.fromMap(json.decode(str));
@@ -32,20 +33,23 @@ class Transaksi {
         from: Dompet.fromMap(json["from"]),
         to: Dompet.fromMap(json["to"]),
         number: json["number"],
+        image: json["image"],
       );
 
   factory Transaksi.initial() => Transaksi(
-      id: 1,
-      date: '',
-      amount: 0,
-      cost: 0,
-      desc: '',
-      revenue: 0,
-      status: '',
-      from: Dompet.initial(),
-      to: Dompet.initial(),
-      user: User.initial(),
-      number: '');
+        id: 1,
+        date: '',
+        amount: 0,
+        cost: 0,
+        desc: '',
+        revenue: 0,
+        status: '',
+        from: Dompet.initial(),
+        to: Dompet.initial(),
+        user: User.initial(),
+        number: '',
+        image: '',
+      );
 
   int? amount;
   int? cost;
@@ -58,6 +62,7 @@ class Transaksi {
   Dompet? to;
   User? user;
   String? number;
+  String? image;
 
   String toJson() => json.encode(toMap());
 
@@ -73,5 +78,6 @@ class Transaksi {
         "from": from?.toMap(),
         "to": to?.toMap(),
         "number": number,
+        "image": image,
       };
 }

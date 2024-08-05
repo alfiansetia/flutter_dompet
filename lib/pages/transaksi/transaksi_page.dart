@@ -1,7 +1,9 @@
+// import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dompet/bloc/transaksi/transaksi_bloc.dart';
-import 'package:flutter_dompet/pages/transaksi/transaksi_add_page.dart';
+// import 'package:flutter_dompet/pages/transaksi/transaksi_add_page.dart';
 import 'package:flutter_dompet/pages/transaksi/widgets/transaksi_item_widget.dart';
 
 import '../../utils/color_resources.dart';
@@ -13,14 +15,17 @@ class TransaksiPage extends StatefulWidget {
   State<TransaksiPage> createState() => _TransaksiPageState();
 }
 
-class _TransaksiPageState extends State<TransaksiPage> {
+class _TransaksiPageState extends State<TransaksiPage>
+    with SingleTickerProviderStateMixin {
   final _scrollController = ScrollController();
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     _refreshData();
     _scrollController.addListener(_onScroll);
+    _tabController = TabController(length: 2, vsync: this);
   }
 
   @override
@@ -45,8 +50,16 @@ class _TransaksiPageState extends State<TransaksiPage> {
     }
   }
 
-  Future<void> _refreshData() async {
-    context.read<TransaksiBloc>().add(const FetchAllTransaksiEvent(page: 1));
+  Future<void> _refreshData([String status = 'success']) async {
+    context
+        .read<TransaksiBloc>()
+        .add(FetchAllTransaksiEvent(page: 1, query: 'status=${status}'));
+  }
+
+  Future<void> _getData(String status) async {
+    context
+        .read<TransaksiBloc>()
+        .add(FetchAllTransaksiEvent(page: 1, query: 'status=${status}'));
   }
 
   Widget _showMessage(String message) {
@@ -70,55 +83,118 @@ class _TransaksiPageState extends State<TransaksiPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transaksi'),
+        bottom: TabBar(
+          onTap: (value) {
+            if (value == 0) {
+              _getData('success');
+            } else {
+              _getData('cancel');
+            }
+          },
+          controller: _tabController,
+          tabs: [
+            Tab(text: 'Done'),
+            Tab(text: 'Cancel'),
+          ],
+        ),
       ),
       backgroundColor: ColorResources.getHomeBg(context),
       resizeToAvoidBottomInset: false,
-      body: RefreshIndicator(
-        child: SafeArea(
-          child: BlocBuilder<TransaksiBloc, TransaksiState>(
-            builder: (context, state) {
-              if (state.status == TransaksiStatus.error) {
-                return _showMessage(state.error.message);
-              } else {
-                // if(state.status == TransaksiStatus.loaded && state.sta)
-                final isLoading = state.status == TransaksiStatus.loading;
-                return state.model.isEmpty
-                    ? _showMessage('No Data')
-                    : ListView.builder(
-                        controller: _scrollController,
-                        physics: AlwaysScrollableScrollPhysics(),
-                        itemCount: state.model.length + (isLoading ? 1 : 0),
-                        itemBuilder: (BuildContext context, int index) {
-                          if (index < state.model.length) {
-                            return Card(
-                              child: TransaksiItemWidget(
-                                transaksi: state.model[index],
-                              ),
+      body: TabBarView(
+        controller: _tabController,
+        children: [
+          RefreshIndicator(
+            child: SafeArea(
+              child: BlocBuilder<TransaksiBloc, TransaksiState>(
+                builder: (context, state) {
+                  if (state.status == TransaksiStatus.error) {
+                    return _showMessage(state.error.message);
+                  } else {
+                    final isLoading = state.status == TransaksiStatus.loading;
+                    if (isLoading && state.model.isEmpty) {
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      return state.model.isEmpty
+                          ? _showMessage('No Data')
+                          : ListView.builder(
+                              controller: _scrollController,
+                              physics: AlwaysScrollableScrollPhysics(),
+                              itemCount:
+                                  state.model.length + (isLoading ? 1 : 0),
+                              itemBuilder: (BuildContext context, int index) {
+                                if (index < state.model.length) {
+                                  return Card(
+                                    child: TransaksiItemWidget(
+                                      transaksi: state.model[index],
+                                    ),
+                                  );
+                                } else {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                              },
                             );
-                          } else {
-                            return Center(
-                              child: CircularProgressIndicator(),
-                            );
-                          }
-                        },
-                      );
-              }
-            },
-          ),
-        ),
-        onRefresh: () => _refreshData(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const TransaksiAddPage(),
+                    }
+                  }
+                },
+              ),
             ),
-          );
-        },
-        child: Icon(Icons.add),
+            onRefresh: () => _refreshData('success'),
+          ),
+          RefreshIndicator(
+            child: SafeArea(
+              child: BlocBuilder<TransaksiBloc, TransaksiState>(
+                builder: (context, state) {
+                  if (state.status == TransaksiStatus.error) {
+                    return _showMessage(state.error.message);
+                  } else {
+                    // if(state.status == TransaksiStatus.loaded && state.sta)
+                    final isLoading = state.status == TransaksiStatus.loading;
+                    if (isLoading && state.model.isEmpty) {
+                      return Center(child: CircularProgressIndicator());
+                    } else {
+                      return state.model.isEmpty
+                          ? _showMessage('No Data')
+                          : ListView.builder(
+                              controller: _scrollController,
+                              physics: AlwaysScrollableScrollPhysics(),
+                              itemCount:
+                                  state.model.length + (isLoading ? 1 : 0),
+                              itemBuilder: (BuildContext context, int index) {
+                                if (index < state.model.length) {
+                                  return Card(
+                                    child: TransaksiItemWidget(
+                                      transaksi: state.model[index],
+                                    ),
+                                  );
+                                } else {
+                                  return Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                }
+                              },
+                            );
+                    }
+                  }
+                },
+              ),
+            ),
+            onRefresh: () => _refreshData('cancel'),
+          ),
+        ],
       ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //         builder: (context) => const TransaksiAddPage(),
+      //       ),
+      //     );
+      //   },
+      //   child: Icon(Icons.add),
+      // ),
     );
   }
 }

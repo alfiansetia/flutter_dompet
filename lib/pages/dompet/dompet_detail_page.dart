@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dompet/bloc/dompet_form/dompet_form_bloc.dart';
+import 'package:flutter_dompet/utils/price_ext.dart';
 
 import '../../utils/color_resources.dart';
 
@@ -32,7 +33,8 @@ class DompetDetailPage extends StatelessWidget {
                     Text("Acc Name: ${state.model.accName ?? ''}"),
                     Text("Acc No: ${state.model.accNumber ?? ''}"),
                     Text("Type: ${state.model.type ?? ''}"),
-                    Text("Saldo: ${state.model.saldo ?? '0'}"),
+                    Text("Saldo: " +
+                        '${state.model.saldo ?? '0'}'.formatPrice()),
                   ],
                 ),
               );

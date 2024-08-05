@@ -35,11 +35,11 @@ class TransaksiBloc extends Bloc<TransaksiEvent, TransaksiState> {
     try {
       final TransaksisResponseModel model =
           await TransaksiRepository(auth: auth)
-              .getAll(query: "page=${event.page}");
+              .getAll(query: "page=${event.page}&${event.query}");
       final newData = model.data as Iterable<Transaksi>;
       data.addAll(newData);
 
-      print(event.page);
+      // print(event.page);
 
       emit(state.copyWith(
         status: TransaksiStatus.loaded,

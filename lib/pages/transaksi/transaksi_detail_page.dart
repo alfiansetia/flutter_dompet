@@ -40,6 +40,9 @@ class TransaksiDetailPage extends StatelessWidget {
                         '${(state.model.revenue ?? '0')}'.formatPrice()),
                     Text("Status: ${state.model.status ?? ''}"),
                     Text("User: ${state.model.user!.name ?? ''}"),
+                    Expanded(
+                      child: Image.network(state.model.image!),
+                    )
                   ],
                 ),
               );
